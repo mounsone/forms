@@ -7,10 +7,17 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load .env file (for local development)
+# Load environment variables from .env file
 load_dotenv()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Optional: Use pymysql if mysqlclient fails
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except ImportError:
+    pass
+
+# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -22,7 +29,7 @@ DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    os.environ.get('RENDER_EXTERNAL_HOSTNAME', '')  # for Render deployment
+    os.environ.get('RENDER_EXTERNAL_HOSTNAME', ''),
 ]
 
 # Application definition
@@ -73,14 +80,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
-# ✅ Updated database config for Render & local development
+# ✅ Database Configuration for Railway MySQL
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'forms'),
+        'NAME': os.environ.get('DB_NAME', 'railway'),
         'USER': os.environ.get('DB_USER', 'root'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'root'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
         'PORT': os.environ.get('DB_PORT', '3306'),
     }
 }
